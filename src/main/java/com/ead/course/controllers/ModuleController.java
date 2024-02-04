@@ -82,15 +82,29 @@ public class ModuleController {
         }
         
         var courseModel = moduleModelOptional.get();
-         
+        
         courseModel.setTitle(moduleDto.getTitle());
         courseModel.setDescription(moduleDto.getDescription());
         
         return ResponseEntity.status(HttpStatus.OK).body(moduleService.save(courseModel));
     }
-
+    
     @GetMapping("/courses/{courseId}/modules")
-    public ResponseEntity<List<ModuleModel>> getAllCourses(@PathVariable(value = "courseId") UUID courseId) {
+    public ResponseEntity<List<ModuleModel>> getAllModules(@PathVariable(value = "courseId") UUID courseId) {
         return ResponseEntity.status(HttpStatus.OK).body(moduleService.findAllByCourse(courseId));
+    }
+    
+    
+    @GetMapping("/courses/{courseId}/modules/{moduleId}")
+    public ResponseEntity<Object> getOneModule(@PathVariable(value = "courseId") UUID courseId,
+                                                @PathVariable(value = "moduleId") UUID moduleId) {
+        
+        Optional<ModuleModel> moduleModelOptional = moduleService.findModuleIntoCourse(courseId, moduleId);
+    
+        if (!moduleModelOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Module not found for this course.");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(moduleModelOptional.get());
     }
 }
