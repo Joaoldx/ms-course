@@ -2,6 +2,7 @@ package com.ead.course.controllers;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -55,8 +57,8 @@ public class ModuleController {
     }
 
     @DeleteMapping("/courses/{courseId}/modules/{moduleId}")
-    public ResponseEntity<Object> deleteModule(@PathVariable(value = "courseId") @Valid UUID courseId,
-                                                @PathVariable(value = "moduleId") @Valid UUID moduleId) {
+    public ResponseEntity<Object> deleteModule(@PathVariable(value = "courseId") UUID courseId,
+                                                @PathVariable(value = "moduleId") UUID moduleId) {
         
         Optional<ModuleModel> moduleModelOptional = moduleService.findModuleIntoCourse(courseId, moduleId);
         
@@ -69,8 +71,8 @@ public class ModuleController {
     }
 
     @PutMapping("/courses/{courseId}/modules/{moduleId}")
-    public ResponseEntity<Object> updateModule(@PathVariable(value = "courseId") @Valid UUID courseId,
-                                                @PathVariable(value = "moduleId") @Valid UUID moduleId,
+    public ResponseEntity<Object> updateModule(@PathVariable(value = "courseId") UUID courseId,
+                                                @PathVariable(value = "moduleId") UUID moduleId,
                                                 @RequestBody @Valid ModuleDto moduleDto) {
         
         Optional<ModuleModel> moduleModelOptional = moduleService.findModuleIntoCourse(courseId, moduleId);
@@ -85,5 +87,10 @@ public class ModuleController {
         courseModel.setDescription(moduleDto.getDescription());
         
         return ResponseEntity.status(HttpStatus.OK).body(moduleService.save(courseModel));
+    }
+
+    @GetMapping("/courses/{courseId}/modules")
+    public ResponseEntity<List<ModuleModel>> getAllCourses(@PathVariable(value = "courseId") UUID courseId) {
+        return ResponseEntity.status(HttpStatus.OK).body(moduleService.findAllByCourse(courseId));
     }
 }
