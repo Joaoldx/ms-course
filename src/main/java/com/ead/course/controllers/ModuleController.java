@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -54,7 +55,7 @@ public class ModuleController {
     }
 
     @DeleteMapping("/courses/{courseId}/modules/{moduleId}")
-    public ResponseEntity<Object> deleteCourse(@PathVariable(value = "courseId") @Valid UUID courseId,
+    public ResponseEntity<Object> deleteModule(@PathVariable(value = "courseId") @Valid UUID courseId,
                                                 @PathVariable(value = "moduleId") @Valid UUID moduleId) {
         
         Optional<ModuleModel> moduleModelOptional = moduleService.findModuleIntoCourse(courseId, moduleId);
@@ -65,5 +66,24 @@ public class ModuleController {
         
         moduleService.delete(moduleModelOptional.get());
         return ResponseEntity.status(HttpStatus.OK).body("Module deleted successfully.");
+    }
+
+    @PutMapping("/courses/{courseId}/modules/{moduleId}")
+    public ResponseEntity<Object> updateModule(@PathVariable(value = "courseId") @Valid UUID courseId,
+                                                @PathVariable(value = "moduleId") @Valid UUID moduleId,
+                                                @RequestBody @Valid ModuleDto moduleDto) {
+        
+        Optional<ModuleModel> moduleModelOptional = moduleService.findModuleIntoCourse(courseId, moduleId);
+
+        if (!moduleModelOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Module not found for this course.");
+        }
+        
+        var courseModel = moduleModelOptional.get();
+         
+        courseModel.setTitle(moduleDto.getTitle());
+        courseModel.setDescription(moduleDto.getDescription());
+        
+        return ResponseEntity.status(HttpStatus.OK).body(moduleService.save(courseModel));
     }
 }
