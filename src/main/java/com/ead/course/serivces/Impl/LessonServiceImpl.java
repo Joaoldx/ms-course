@@ -1,5 +1,8 @@
 package com.ead.course.serivces.Impl;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,5 +19,15 @@ public class LessonServiceImpl implements LessonService {
     @Override
     public LessonModel save(LessonModel lessonModel) {
         return lessonRepository.save(lessonModel);
+    }
+
+    @Override
+    public Optional<LessonModel> findLessonIntoModule(UUID moduleId, UUID lessonId) {
+        return lessonRepository.findLessonIntoModule(moduleId, lessonId);
+    }
+
+    @Override
+    public void delete(LessonModel lessonModel) {
+        lessonRepository.delete(lessonModel);
     }
 }
