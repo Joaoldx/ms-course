@@ -95,5 +95,18 @@ public class LessonController {
     public ResponseEntity<List<LessonModel>> getAllLessons(@PathVariable(value = "moduleId") UUID moduleId) {
         return ResponseEntity.status(HttpStatus.OK).body(lessonService.findAllByModule(moduleId));
     }
+
+    @GetMapping("/modules/{moduleId}/lessons/{lessonId}")
+    public ResponseEntity<Object> getOneModule(@PathVariable(value = "moduleId") UUID moduleId,
+                                                @PathVariable(value = "lessonId") UUID lessonId) {
+        
+        Optional<LessonModel> lessonModelOptional = lessonService.findLessonIntoModule(moduleId, lessonId);
+
+        if (!lessonModelOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Lesson not found for this module.");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(lessonModelOptional.get());
+    }
     
 }
