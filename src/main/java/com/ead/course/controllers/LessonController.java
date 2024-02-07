@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -54,7 +55,7 @@ public class LessonController {
         return ResponseEntity.status(HttpStatus.CREATED).body(lessonService.save(lessonModel));
     }
 
-    @DeleteMapping("/courses/{moduleId}/modules/{lessonId}")
+    @DeleteMapping("/modules/{moduleId}/modules/{lessonId}")
     public ResponseEntity<Object> deleteLesson(@PathVariable(value = "moduleId") UUID moduleId,
                                                 @PathVariable(value = "lessonId") UUID lessonId) {
         
@@ -67,4 +68,25 @@ public class LessonController {
         lessonService.delete(lessonModelOptional.get());
         return ResponseEntity.status(HttpStatus.OK).body("Lesson deleted successfully.");
     }
+
+    @PutMapping("/modules/{moduleId}/lesson/{lessonId}")
+    public ResponseEntity<Object> updateLesson(@PathVariable(value = "moduleId") UUID moduleId,
+                                                @PathVariable(value = "lessonId") UUID lessonId,
+                                                @RequestBody @Valid LessonDto lessonDto) {
+        
+        Optional<LessonModel> lessonModelOptional = lessonService.findLessonIntoModule(moduleId, lessonId);
+
+        if (!lessonModelOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Lesson not found for this module.");
+        }
+        
+        var lessonModel = lessonModelOptional.get();
+        
+        lessonModel.setTitle(lessonDto.getTitle());
+        lessonModel.setDescription(lessonDto.getDescrioption());
+        lessonModel.setVideoUrl(lessonDto.getVideoUrl());
+        
+        return ResponseEntity.status(HttpStatus.OK).body(lessonService.save(lessonModel));
+    }
+    
 }
