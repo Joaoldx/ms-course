@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ead.course.dtos.LessonDto;
-import com.ead.course.dtos.ModuleDto;
-import com.ead.course.models.CourseModel;
 import com.ead.course.models.LessonModel;
 import com.ead.course.models.ModuleModel;
 import com.ead.course.serivces.LessonService;
@@ -97,7 +95,7 @@ public class LessonController {
     }
 
     @GetMapping("/modules/{moduleId}/lessons/{lessonId}")
-    public ResponseEntity<Object> getOneModule(@PathVariable(value = "moduleId") UUID moduleId,
+    public ResponseEntity<Object> getOneLesson(@PathVariable(value = "moduleId") UUID moduleId,
                                                 @PathVariable(value = "lessonId") UUID lessonId) {
         
         Optional<LessonModel> lessonModelOptional = lessonService.findLessonIntoModule(moduleId, lessonId);
