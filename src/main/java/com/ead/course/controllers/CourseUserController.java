@@ -1,5 +1,6 @@
 package com.ead.course.controllers;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +13,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ead.course.clients.CourseClient;
+import com.ead.course.dtos.SubscriptionDto;
 import com.ead.course.dtos.UserDto;
+import com.ead.course.models.CourseModel;
+import com.ead.course.models.CourseUserModel;
+import com.ead.course.serivces.CourseService;
+import com.ead.course.serivces.CourseUserService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -24,6 +34,12 @@ public class CourseUserController {
     @Autowired
     CourseClient courseClient;
     
+    @Autowired
+    CourseService courseService;
+    
+    @Autowired
+    CourseUserService courseUserService;
+    
     @GetMapping("/courses/{courseId}/users")
     public ResponseEntity<Page<UserDto>> getAllUsersByCourse (@PageableDefault(page = 0, size = 10, sort = "userId", direction = Sort.Direction.ASC) Pageable pageable,
                                                         @PathVariable UUID courseId) {
@@ -31,4 +47,24 @@ public class CourseUserController {
         return ResponseEntity.status(HttpStatus.OK).body(courseClient.getAllUsersByCourse(courseId, pageable));
     }
     
+    @PostMapping("/courses/{courseId}/users/subscription")
+    public ResponseEntity<Object> saveSubscriptionUserInCourse(@PathVariable(value = "courseId") UUID courseId,
+                                                                @RequestBody @Valid SubscriptionDto subscriptionDto ) {
+        
+        Optional<CourseModel> courseModelOptional = courseService.findById(courseId);
+        
+        if (!courseModelOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course not found.");
+        }
+        
+        if (!courseUserService.existsByCourseAndUserId(courseModelOptional.get(), subscription.getUserId())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: subscription already exists!");
+        }
+        
+        //verificação user
+        
+        CourseUserModel courseUserModel = courseUserService.save(courseModelOptional.get().convertToCourseUserModel(subscriptionDto.getUserId()));
+        
+        return ResponseEntity.status(HttpStatus.CREATED).body("Subscription created successfully.");
+    }
 }
