@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ead.course.clients.CourseClient;
+import com.ead.course.clients.AuthUserClient;
 import com.ead.course.dtos.SubscriptionDto;
 import com.ead.course.dtos.UserDto;
 import com.ead.course.models.CourseModel;
@@ -32,7 +32,7 @@ import jakarta.validation.Valid;
 public class CourseUserController {
 
     @Autowired
-    CourseClient courseClient;
+    AuthUserClient courseClient;
     
     @Autowired
     CourseService courseService;
