@@ -38,24 +38,29 @@ public class AuthUserClient {
         List<UserDto> searchResult = null;
         
         String url = REQUEST_URI_AUTHUSER + utilsService.createUrlGetAllUsersByCourse(courseId, pageable);
-    
+        
         ResponseEntity<ResponsePageDto<UserDto>> result = null;
-
+        
         log.debug("Request URL: {} ", url);
         log.info("Request URL: {} ", url);
-       
+        
         try {
             ParameterizedTypeReference<ResponsePageDto<UserDto>> responseType = new ParameterizedTypeReference<ResponsePageDto<UserDto>>() {};
             result = restTemplate.exchange(url, HttpMethod.GET, null, responseType);
             searchResult = result.getBody().getContent();
-
+            
             log.debug("Response Number of Elements: {} ", searchResult.size());
         } catch (HttpStatusCodeException e) {
             log.debug("Error request /users {} ", e);
         }
-
+        
         log.info("Ending request /users userId {} ", courseId);
         return result.getBody();
     }
-
+    
+    public ResponseEntity<UserDto> getOneUserById(UUID userId) {
+        String url = REQUEST_URI_AUTHUSER + "/users/" + userId;
+        
+        return restTemplate.exchange(url, HttpMethod.GET, null, UserDto.class);
+    }
 }
