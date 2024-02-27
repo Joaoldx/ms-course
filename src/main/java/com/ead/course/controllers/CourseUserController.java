@@ -77,7 +77,7 @@ public class CourseUserController {
             }
         }
         
-        CourseUserModel courseUserModel = courseUserService.save(courseModelOptional.get().convertToCourseUserModel(subscriptionDto.getUserId()));
+        CourseUserModel courseUserModel = courseUserService.saveAndSendSuscriptionUserInCourse(courseModelOptional.get().convertToCourseUserModel(subscriptionDto.getUserId()));
         
         return ResponseEntity.status(HttpStatus.CREATED).body(courseUserModel);
     }
