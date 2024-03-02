@@ -28,10 +28,12 @@ import com.ead.course.serivces.CourseService;
 import com.ead.course.specifications.SpecificationTemplate;
 
 import jakarta.validation.Valid;
+import lombok.extern.log4j.Log4j2;
 
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
+@Log4j2
 @RestController
 @RequestMapping("/courses")
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -41,14 +43,19 @@ public class CourseController {
     CourseService courseService;
 
     @PostMapping
-    public ResponseEntity<Object> saveCourse(@RequestBody CourseDto courseDto) {
+    public ResponseEntity<Object> saveCourse(@RequestBody @Valid CourseDto courseDto) {
         var courseModel = new CourseModel();
         BeanUtils.copyProperties(courseDto, courseModel);
         
         courseModel.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
         courseModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
+
+        log.debug("POST saveCourse courseModel saved {} ", courseModel.toString());
+        log.info("Course saved successfully courseId {} ", courseModel.getCourseId());
+
+        courseService.save(courseModel);
         
-        return ResponseEntity.status(HttpStatus.CREATED).body(courseService.save(courseModel));
+        return ResponseEntity.status(HttpStatus.CREATED).body(courseModel);
     }
     
     @DeleteMapping("/{courseId}")
