@@ -2,6 +2,8 @@ server:
     port: 8082
 
 spring:
+    application:
+        name: ead-course-service
     datasource:
         url: jdbc:postgresql://localhost:5432/ead-course
         username: postgres
@@ -20,7 +22,7 @@ spring:
 ead:
     api:
         url:
-            authUser: 'http://localhost:8087'
+            authUser: 'http://ead-authUser-service'
 
 eureka:
     client:
